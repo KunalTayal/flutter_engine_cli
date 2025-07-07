@@ -41,7 +41,7 @@ class InitCommand extends Command<void> {
     final stateManagement =
         withRiverpod ? 'riverpod' : (withBloc ? 'bloc' : 'none');
 
-    final projectName = await FileUtils.getFlutterProjectName();
+    final projectName = FileUtils.getFlutterProjectName();
 
     print('🚀 Initializing project "$projectName" with Clean Architecture...');
 
@@ -118,14 +118,19 @@ class InitCommand extends Command<void> {
     final commonDeps = ['get_it', 'dartz', 'connectivity_plus', 'equatable'];
     await FileUtils.runCommand('flutter', ['pub', 'add', ...commonDeps]);
 
-    if (withRiverpod)
+    if (withRiverpod) {
       await FileUtils.runCommand('flutter', ['pub', 'add', 'flutter_riverpod']);
-    if (withBloc)
+    }
+    if (withBloc) {
       await FileUtils.runCommand(
           'flutter', ['pub', 'add', 'flutter_bloc', 'bloc']);
-    if (withDio) await FileUtils.runCommand('flutter', ['pub', 'add', 'dio']);
-    if (withGoRouter)
+    }
+    if (withDio) {
+      await FileUtils.runCommand('flutter', ['pub', 'add', 'dio']);
+    }
+    if (withGoRouter) {
       await FileUtils.runCommand('flutter', ['pub', 'add', 'go_router']);
+    }
     if (withHive) {
       await FileUtils.runCommand(
           'flutter', ['pub', 'add', 'hive', 'hive_flutter']);

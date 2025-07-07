@@ -30,7 +30,7 @@ class AddFeatureCommand extends Command<void> {
     final stateManagement = argResults!['state'] as String;
     final withGoRouter = argResults!['with-g-routes'] as bool;
 
-    final projectName = await FileUtils.getFlutterProjectName();
+    final projectName = FileUtils.getFlutterProjectName();
 
     if (featureName.isEmpty || !RegExp(r'^[a-z_]+$').hasMatch(featureName)) {
       throw 'Feature name must be in snake_case (e.g., "user_profile").';

@@ -1,8 +1,5 @@
 import 'dart:io';
 
-import 'package:path/path.dart' as p;
-import 'package:tint/tint.dart';
-
 class FileUtils {
   // static Future<String> getFlutterProjectName() async {
   //   final pubspecFile = File('pubspec.yaml');
