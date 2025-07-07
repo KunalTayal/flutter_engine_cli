@@ -1,21 +1,19 @@
 name: flutter_scaffold
-description: A command-line tool to apply a scalable, feature-first project structure to a new Flutter project.
-version: 1.0.0
-# homepage: https://your-github-repo-link.com
-# repository: https://your-github-repo-link.com
+description: A powerful CLI to bootstrap and manage scalable, feature-first Flutter projects.
+version: 1.0.1
+# repository: https://github.com/my_org/my_repo
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
-# Add dependencies for the CLI tool itself
 dependencies:
-  args: ^2.4.2   # For parsing command-line arguments
-  tint: ^2.0.0     # For colorful terminal output
-
-# This makes it a runnable global package
-executables:
-  flutter_scaffold: # The command the user will type
+  args: ^2.4.2
+  path: ^1.8.3
+  tint: ^2.0.1
 
 dev_dependencies:
   lints: ^2.1.0
   test: ^1.24.0
+
+executables:
+  flutter_scaffold:
