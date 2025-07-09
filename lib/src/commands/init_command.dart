@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:args/command_runner.dart';
 import 'package:flutter_scaffold/src/commands/add_feature_command.dart';
 import 'package:flutter_scaffold/src/templates/core_templates.dart';
 import 'package:flutter_scaffold/src/utils/file_utils.dart';
+import 'package:tint/tint.dart';
 
 class InitCommand extends Command<void> {
   @override
@@ -113,29 +116,41 @@ class InitCommand extends Command<void> {
 
   Future<void> _addDependencies(bool withRiverpod, bool withBloc, bool withDio,
       bool withGoRouter, bool withHive) async {
-    print('\n📦 Adding required dependencies to pubspec.yaml...');
+    print('\n📦 Adding required dependencies...');
 
-    final commonDeps = ['get_it', 'dartz', 'connectivity_plus', 'equatable'];
-    await FileUtils.runCommand('flutter', ['pub', 'add', ...commonDeps]);
+    try {
+      // Group common dependencies into a single call for efficiency
+      final commonDeps = ['get_it', 'dartz', 'connectivity_plus', 'equatable'];
+      if (withRiverpod) commonDeps.add('flutter_riverpod');
+      if (withBloc) commonDeps.addAll(['flutter_bloc', 'bloc']);
+      if (withDio) commonDeps.add('dio');
+      if (withGoRouter) commonDeps.add('go_router');
+      if (withHive) commonDeps.addAll(['hive', 'hive_flutter']);
 
-    if (withRiverpod) {
-      await FileUtils.runCommand('flutter', ['pub', 'add', 'flutter_riverpod']);
-    }
-    if (withBloc) {
-      await FileUtils.runCommand(
-          'flutter', ['pub', 'add', 'flutter_bloc', 'bloc']);
-    }
-    if (withDio) {
-      await FileUtils.runCommand('flutter', ['pub', 'add', 'dio']);
-    }
-    if (withGoRouter) {
-      await FileUtils.runCommand('flutter', ['pub', 'add', 'go_router']);
-    }
-    if (withHive) {
-      await FileUtils.runCommand(
-          'flutter', ['pub', 'add', 'hive', 'hive_flutter']);
-      await FileUtils.runCommand(
-          'flutter', ['pub', 'add', '--dev', 'hive_generator', 'build_runner']);
+      if (commonDeps.isNotEmpty) {
+        await FileUtils.runCommand('flutter', ['pub', 'add', ...commonDeps]);
+      }
+
+      // Handle dev dependencies separately
+      final devDeps = <String>[];
+      if (withHive) {
+        devDeps.addAll(['hive_generator', 'build_runner']);
+      }
+
+      if (devDeps.isNotEmpty) {
+        await FileUtils.runCommand(
+            'flutter', ['pub', 'add', '--dev', ...devDeps]);
+      }
+    } on ProcessException catch (e) {
+      print('\n❌ An error occurred while adding dependencies.'.red().bold());
+      print('The command "${e.executable} ${e.arguments.join(' ')}" failed.'
+          .red());
+      print(
+          'This can sometimes happen due to network issues or a misconfigured Flutter installation.'
+              .yellow());
+      print('Please try running the command manually in your project directory.'
+          .yellow());
+      exit(e.errorCode); // Exit with the same error code as the failed process
     }
   }
 }
