@@ -80,7 +80,7 @@ class ${name.toPascalCase()}RepositoryImpl implements ${name.toPascalCase()}Repo
 
   static String remoteDataSource(String name, String projectName) => '''
 import 'package:$projectName/core/error/exceptions.dart';
-import 'package:$projectName/core/network/api_client.dart'; // Assuming you use the generated ApiClient
+// import 'package:$projectName/core/network/api_client.dart'; // Assuming you use the generated ApiClient
 import 'package:$projectName/features/$name/data/models/${name}_model.dart';
 
 abstract class ${name.toPascalCase()}RemoteDataSource {
@@ -88,9 +88,9 @@ abstract class ${name.toPascalCase()}RemoteDataSource {
 }
 
 class ${name.toPascalCase()}RemoteDataSourceImpl implements ${name.toPascalCase()}RemoteDataSource {
-  final ApiClient apiClient;
+  // final ApiClient apiClient;
 
-  ${name.toPascalCase()}RemoteDataSourceImpl({required this.apiClient});
+  // ${name.toPascalCase()}RemoteDataSourceImpl({required this.apiClient});
 
   @override
   Future<${name.toPascalCase()}Model> get${name.toPascalCase()}Data() async {
