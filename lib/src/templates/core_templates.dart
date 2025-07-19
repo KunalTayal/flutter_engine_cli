@@ -39,18 +39,22 @@ import 'package:get_it/get_it.dart';
 ${withDio ? "import 'package:dio/dio.dart';" : ""}
 ${withDio ? "import 'package:$projectName/core/network/api_client.dart';" : ""}
 ${withGoRouter ? "import 'package:go_router/go_router.dart';" : ""}
+${withGoRouter ? "import 'package:$projectName/features/home/presentation/pages/home_page.dart';" : ""}
 
 final sl = GetIt.instance;
 
 Future<void> init() async {
+  // External Dependencies
+  ${withDio ? "sl.registerLazySingleton<Dio>(() => Dio());" : ""}
+
   // Core
-  ${withDio ? "sl.registerLazySingleton(() => ApiClient());" : ""}
+  ${withDio ? "sl.registerLazySingleton<ApiClient>(() => ApiClientImpl(dio: sl()));" : ""}
 
   // Features
   // Register your feature dependencies here
 
   // External
-  ${withGoRouter ? "sl.registerLazySingleton(() => GoRouter(routes: [])); // Replace with your actual routes" : ""}
+  ${withGoRouter ? "sl.registerLazySingleton(() => GoRouter(routes: router.configuration.routes,),);" : ""}
 }
 ''';
 
