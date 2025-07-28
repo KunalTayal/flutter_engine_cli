@@ -80,11 +80,15 @@ class InitCommand extends Command<void> {
       bool withHive, String projectName) async {
     final coreFolders = [
       'lib/core/common',
+      'lib/core/common/widgets',
       'lib/core/config',
+      'lib/core/constants',
       'lib/core/di',
       'lib/core/error',
       'lib/core/network',
       'lib/core/storage',
+      'lib/core/theme',
+      'lib/core/utils',
     ];
     for (final folder in coreFolders) {
       await FileUtils.createFolder(folder);
@@ -99,12 +103,26 @@ class InitCommand extends Command<void> {
         'lib/core/common/isolate_parser.dart', CoreTemplates.isolateParser);
     await FileUtils.createFile('lib/core/di/injector.dart',
         CoreTemplates.injector(withDio, withGoRouter, projectName));
+    await FileUtils.createFile(
+        'lib/core/theme/app_theme.dart', CoreTemplates.appThemeTemplate(projectName));
+    await FileUtils.createFile(
+        'lib/core/constants/app_assets.dart', CoreTemplates.appAssetsTemplate);
+    await FileUtils.createFile(
+        'lib/core/constants/app_strings.dart', CoreTemplates.appStringsTemplate);
+    await FileUtils.createFile(
+        'lib/core/constants/app_colors.dart', CoreTemplates.appColorsTemplate);
+    await FileUtils.createFile(
+        'lib/core/constants/app_text_styles.dart', CoreTemplates.appTextStylesTemplate);
     if (withHive) {
       await FileUtils.createFile(
           'lib/core/storage/hive_storage.dart', CoreTemplates.hiveStorage);
     }
 
     if (withDio) {
+      await FileUtils.createFile(
+          'lib/core/config/environment_config.dart', CoreTemplates.environmentConfigTemplate);
+          await FileUtils.createFile(
+          'lib/core/config/api_endpoints.dart', CoreTemplates.apiEndpointsTemplate(projectName));
       await FileUtils.createFile(
           'lib/core/network/api_client.dart', CoreTemplates.apiClientTemplate);
     }

@@ -5,6 +5,8 @@ class CoreTemplates {
           bool withRiverpod, bool withGoRouter, String projectName) =>
       '''
 import 'package:flutter/material.dart';
+import 'package:$projectName/core/config/environment_config.dart';
+import 'package:$projectName/core/theme/app_theme.dart';
 ${withRiverpod ? "import 'package:flutter_riverpod/flutter_riverpod.dart';" : ""}
 import 'package:$projectName/core/di/injector.dart' as di;
 ${withGoRouter ? "import 'package:$projectName/core/config/router.dart';" : "import 'package:$projectName/features/home/presentation/pages/home_page.dart';"}
@@ -12,6 +14,11 @@ ${withGoRouter ? "import 'package:$projectName/core/config/router.dart';" : "imp
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Environment Configuration
+  EnvironmentConfig.initialize();
+
+  // Initialize Dependency Injection
   await di.init();
   runApp(${withRiverpod ? 'const ProviderScope(child: MyApp())' : 'const MyApp()'});
 }
@@ -22,11 +29,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp${withGoRouter ? '.router' : ''}(
-      title: 'Flutter App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
+      title: EnvironmentConfig.appTitle, // Use title from config
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
       ${withGoRouter ? 'routerConfig: router,' : 'home: const HomePage(),'}
     );
   }
@@ -39,7 +45,7 @@ import 'package:get_it/get_it.dart';
 ${withDio ? "import 'package:dio/dio.dart';" : ""}
 ${withDio ? "import 'package:$projectName/core/network/api_client.dart';" : ""}
 ${withGoRouter ? "import 'package:go_router/go_router.dart';" : ""}
-${withGoRouter ? "import 'package:$projectName/features/home/presentation/pages/home_page.dart';" : ""}
+${withGoRouter ? "import 'package:$projectName/core/config/router.dart';" : ""}
 
 final sl = GetIt.instance;
 
@@ -367,6 +373,255 @@ class HiveStorageServiceImpl implements StorageService {
     } catch (e) {
       throw CacheException(message: 'Failed to clear cache: \$e');
     }
+  }
+}
+""";
+
+static const String environmentConfigTemplate = """
+import 'package:flutter/foundation.dart';
+
+/// A class to manage environment-specific configurations.
+///
+/// This setup allows for different settings for development, staging, and production builds
+/// by using the '--dart-define' flag during the build process.
+///
+/// Example:
+/// flutter run --dart-define=ENVIRONMENT=prod
+enum Environment { dev, staging, prod }
+
+class EnvironmentConfig {
+  EnvironmentConfig._();
+
+  static late final Environment environment;
+
+  /// Initializes the environment configuration.
+  /// This should be called once in `main.dart` before the app runs.
+  static void initialize() {
+    const envString = String.fromEnvironment('ENVIRONMENT', defaultValue: 'dev');
+    environment = Environment.values.firstWhere(
+      (e) => e.toString().split('.').last == envString,
+      orElse: () => Environment.dev,
+    );
+  }
+
+  static String get appTitle {
+    switch (environment) {
+      case Environment.prod:
+        return 'My App';
+      case Environment.staging:
+        return '[STG] My App';
+      case Environment.dev:
+      default:
+        return '[DEV] My App';
+    }
+  }
+
+  static String get baseUrl {
+    switch (environment) {
+      case Environment.prod:
+        return 'https://api.myapp.com/v1';
+      case Environment.staging:
+        return 'https://stg.api.myapp.com/v1';
+      case Environment.dev:
+      default:
+        return 'https://dev.api.myapp.com/v1';
+    }
+  }
+}
+""";
+
+static String apiEndpointsTemplate(String projectName) => """
+import 'package:$projectName/core/config/environment_config.dart';
+
+/// A class containing all API endpoint constants.
+class ApiEndpoints {
+  ApiEndpoints._();
+
+  static final String _baseUrl = EnvironmentConfig.baseUrl;
+
+  // --- Auth ---
+  static String get login => '\$_baseUrl/auth/login';
+  static String get register => '\$_baseUrl/auth/register';
+
+  // --- User ---
+  static String get fetchProfile => '\$_baseUrl/user/profile';
+  static String updateUser(String userId) => '\$_baseUrl/user/\$userId';
+}
+""";
+
+// --- Constants ---
+
+static const String appColorsTemplate = """
+import 'package:flutter/material.dart';
+
+/// A class containing color constants for the app.
+class AppColors {
+  AppColors._();
+
+  // --- Main Colors ---
+  static const Color primary = Color(0xFF0D47A1);
+  static const Color secondary = Color(0xFFF57C00);
+  static const Color accent = Color(0xFFFFC107);
+  
+  // --- Background Colors ---
+  static const Color backgroundLight = Color(0xFFF5F5F5);
+  static const Color backgroundDark = Color(0xFF212121);
+  
+  // --- Text Colors ---
+  static const Color textPrimaryLight = Color(0xFF212121);
+  static const Color textPrimaryDark = Color(0xFFFFFFFF);
+  static const Color textSecondaryLight = Color(0xFF757575);
+  static const Color textSecondaryDark = Color(0xFFBDBDBD);
+
+  // --- Other ---
+  static const Color error = Color(0xFFD32F2F);
+  static const Color success = Color(0xFF388E3C);
+}
+""";
+
+static const String appStringsTemplate = """
+/// A class containing string constants for the app.
+class AppStrings {
+  AppStrings._();
+
+  static const String appName = "My Awesome App";
+
+  // --- Generic ---
+  static const String ok = "OK";
+  static const String cancel = "Cancel";
+  static const String errorTitle = "Error";
+  static const String genericError = "Something went wrong. Please try again.";
+
+  // --- Auth ---
+  static const String login = "Login";
+  static const String welcome = "Welcome back!";
+}
+""";
+
+static const String appAssetsTemplate = """
+/// A class containing constants for asset paths.
+///
+/// To use these assets, make sure to declare them in pubspec.yaml:
+///
+/// flutter:
+///   assets:
+///     - assets/images/
+///     - assets/icons/
+class AppAssets {
+  AppAssets._();
+
+  // --- Base Paths ---
+  static const String _imagesPath = 'assets/images';
+  static const String _iconsPath = 'assets/icons';
+
+  // --- Images ---
+  // Example: static const String logo = '\$_imagesPath/logo.png';
+  
+  // --- Icons ---
+  // Example: static const String googleIcon = '\$_iconsPath/google.svg';
+}
+""";
+
+static const String appTextStylesTemplate = """
+import 'package:flutter/material.dart';
+
+/// A class containing text style constants for the app.
+/// These styles are baseline and can be modified by the AppTheme.
+class AppTextStyles {
+  AppTextStyles._();
+
+  static const TextStyle headline1 = TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.bold,
+  );
+  
+  static const TextStyle headline2 = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+  );
+
+  static const TextStyle bodyLarge = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+  );
+
+  static const TextStyle bodyMedium = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+  );
+
+  static const TextStyle caption = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.normal,
+  );
+}
+""";
+
+// --- Theme ---
+
+static String appThemeTemplate(String projectName) => """
+import 'package:flutter/material.dart';
+import 'package:$projectName/core/constants/app_colors.dart';
+import 'package:$projectName/core/constants/app_text_styles.dart';
+
+/// The central theme configuration for the app.
+class AppTheme {
+  AppTheme._();
+
+  static ThemeData get lightTheme {
+    return ThemeData(
+      brightness: Brightness.light,
+      primaryColor: AppColors.primary,
+      scaffoldBackgroundColor: AppColors.backgroundLight,
+      fontFamily: 'Poppins', // Make sure to add this font to pubspec.yaml
+      colorScheme: const ColorScheme.light(
+        primary: AppColors.primary,
+        secondary: AppColors.secondary,
+        error: AppColors.error,
+        background: AppColors.backgroundLight,
+      ),
+      appBarTheme: AppBarTheme(
+        color: AppColors.primary,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: AppTextStyles.headline2.copyWith(color: Colors.white),
+      ),
+      textTheme: TextTheme(
+        displayLarge: AppTextStyles.headline1.copyWith(color: AppColors.textPrimaryLight),
+        displayMedium: AppTextStyles.headline2.copyWith(color: AppColors.textPrimaryLight),
+        bodyLarge: AppTextStyles.bodyLarge.copyWith(color: AppColors.textPrimaryLight),
+        bodyMedium: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimaryLight),
+        bodySmall: AppTextStyles.caption.copyWith(color: AppColors.textSecondaryLight),
+      ),
+    );
+  }
+
+  static ThemeData get darkTheme {
+    return ThemeData(
+      brightness: Brightness.dark,
+      primaryColor: AppColors.primary,
+      scaffoldBackgroundColor: AppColors.backgroundDark,
+      fontFamily: 'Poppins',
+      colorScheme: const ColorScheme.dark(
+        primary: AppColors.primary,
+        secondary: AppColors.secondary,
+        error: AppColors.error,
+        background: AppColors.backgroundDark,
+      ),
+      appBarTheme: AppBarTheme(
+        color: AppColors.primary,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle: AppTextStyles.headline2.copyWith(color: Colors.white),
+      ),
+      textTheme: TextTheme(
+        displayLarge: AppTextStyles.headline1.copyWith(color: AppColors.textPrimaryDark),
+        displayMedium: AppTextStyles.headline2.copyWith(color: AppColors.textPrimaryDark),
+        bodyLarge: AppTextStyles.bodyLarge.copyWith(color: AppColors.textPrimaryDark),
+        bodyMedium: AppTextStyles.bodyMedium.copyWith(color: AppColors.textPrimaryDark),
+        bodySmall: AppTextStyles.caption.copyWith(color: AppColors.textSecondaryDark),
+      ),
+    );
   }
 }
 """;
