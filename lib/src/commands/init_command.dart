@@ -94,7 +94,6 @@ class InitCommand extends Command<void> {
       await FileUtils.createFolder(folder);
     }
 
-
     // Create core files
     await FileUtils.createFile(
         'lib/core/error/exceptions.dart', CoreTemplates.exceptionsTemplate);
