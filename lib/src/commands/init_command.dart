@@ -14,39 +14,27 @@ class InitCommand extends Command<void> {
       'Initializes a clean architecture structure in the current Flutter project.';
 
   InitCommand() {
-    argParser
-      ..addFlag('with-riverpod',
-          help: 'Adds and configures Riverpod for state management.',
-          negatable: false)
-      ..addFlag('with-bloc',
-          help: 'Adds and configures BLoC for state management.',
-          negatable: false)
-      ..addFlag('with-dio',
-          help: 'Adds Dio for advanced network requests.', negatable: false)
-      ..addFlag('with-g-routes',
-          abbr: 'g', help: 'Adds go_router for navigation.', negatable: false)
-      ..addFlag('with-l-storage',
-          abbr: 'l', help: 'Adds hive for local storage.', negatable: false);
+    // Remove all flags since we're using interactive questions
   }
 
   @override
   Future<void> run() async {
-    final withRiverpod = argResults!['with-riverpod'] as bool;
-    final withBloc = argResults!['with-bloc'] as bool;
-    final withDio = argResults!['with-dio'] as bool;
-    final withGoRouter = argResults!['with-g-routes'] as bool;
-    final withHive = argResults!['with-l-storage'] as bool;
-
-    if (withRiverpod && withBloc) {
-      throw 'Cannot use --with-riverpod and --with-bloc at the same time. Please choose one state management solution.';
-    }
-
-    final stateManagement =
-        withRiverpod ? 'riverpod' : (withBloc ? 'bloc' : 'none');
-
     final projectName = FileUtils.getFlutterProjectName();
 
-    print('🚀 Initializing project "$projectName" with Clean Architecture...');
+    print(
+        '🚀 Initializing project "$projectName" with Clean Architecture...\n');
+
+    // Interactive questions
+    final stateManagement = await _askForStateManagement();
+    final withDio = await _askYesNo(
+        'Do you want to add Dio for advanced network requests? (y/n): ');
+    final withGoRouter =
+        await _askYesNo('Do you want to add go_router for navigation? (y/n): ');
+    final withHive =
+        await _askYesNo('Do you want to add Hive for local storage? (y/n): ');
+
+    final withRiverpod = stateManagement == 'riverpod';
+    final withBloc = stateManagement == 'bloc';
 
     // Create core structure
     await _createCoreStructure(withDio, withGoRouter, withHive, projectName);
@@ -76,6 +64,44 @@ class InitCommand extends Command<void> {
     print('Run `flutter pub get` to install dependencies.');
   }
 
+  Future<String> _askForStateManagement() async {
+    print('Select state management solution:');
+    print('1. BLoC');
+    print('2. Riverpod');
+    print('3. None (use basic state management)');
+
+    while (true) {
+      stdout.write('Enter your choice (1-3): ');
+      final input = stdin.readLineSync()?.trim();
+
+      switch (input) {
+        case '1':
+          return 'bloc';
+        case '2':
+          return 'riverpod';
+        case '3':
+          return 'none';
+        default:
+          print('❌ Invalid choice. Please enter 1, 2, or 3.'.red());
+      }
+    }
+  }
+
+  Future<bool> _askYesNo(String question) async {
+    while (true) {
+      stdout.write(question);
+      final input = stdin.readLineSync()?.trim().toLowerCase();
+
+      if (input == 'y' || input == 'yes') {
+        return true;
+      } else if (input == 'n' || input == 'no') {
+        return false;
+      } else {
+        print('❌ Please enter y/yes or n/no.'.red());
+      }
+    }
+  }
+
   Future<void> _createCoreStructure(bool withDio, bool withGoRouter,
       bool withHive, String projectName) async {
     final coreFolders = [
@@ -103,26 +129,26 @@ class InitCommand extends Command<void> {
         'lib/core/common/isolate_parser.dart', CoreTemplates.isolateParser);
     await FileUtils.createFile('lib/core/di/injector.dart',
         CoreTemplates.injector(withDio, withGoRouter, projectName));
-    await FileUtils.createFile(
-        'lib/core/theme/app_theme.dart', CoreTemplates.appThemeTemplate(projectName));
+    await FileUtils.createFile('lib/core/theme/app_theme.dart',
+        CoreTemplates.appThemeTemplate(projectName));
     await FileUtils.createFile(
         'lib/core/constants/app_assets.dart', CoreTemplates.appAssetsTemplate);
-    await FileUtils.createFile(
-        'lib/core/constants/app_strings.dart', CoreTemplates.appStringsTemplate);
+    await FileUtils.createFile('lib/core/constants/app_strings.dart',
+        CoreTemplates.appStringsTemplate);
     await FileUtils.createFile(
         'lib/core/constants/app_colors.dart', CoreTemplates.appColorsTemplate);
-    await FileUtils.createFile(
-        'lib/core/constants/app_text_styles.dart', CoreTemplates.appTextStylesTemplate);
+    await FileUtils.createFile('lib/core/constants/app_text_styles.dart',
+        CoreTemplates.appTextStylesTemplate);
     if (withHive) {
       await FileUtils.createFile(
           'lib/core/storage/hive_storage.dart', CoreTemplates.hiveStorage);
     }
 
     if (withDio) {
-      await FileUtils.createFile(
-          'lib/core/config/environment_config.dart', CoreTemplates.environmentConfigTemplate);
-          await FileUtils.createFile(
-          'lib/core/config/api_endpoints.dart', CoreTemplates.apiEndpointsTemplate(projectName));
+      await FileUtils.createFile('lib/core/config/environment_config.dart',
+          CoreTemplates.environmentConfigTemplate);
+      await FileUtils.createFile('lib/core/config/api_endpoints.dart',
+          CoreTemplates.apiEndpointsTemplate(projectName));
       await FileUtils.createFile(
           'lib/core/network/api_client.dart', CoreTemplates.apiClientTemplate);
     }
