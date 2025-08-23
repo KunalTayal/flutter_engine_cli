@@ -24,8 +24,32 @@ Flutter Scaffold is a CLI tool that helps you create and maintain Flutter projec
 
 ### Install the CLI tool
 
+#### Option 1: Install from pub.dev (Recommended)
 ```bash
 dart pub global activate flutter_scaffold
+```
+
+#### Option 2: Install from source
+```bash
+# Clone the repository
+git clone <repository-url>
+cd flutter_scaffold
+
+# Install dependencies
+dart pub get
+
+# Activate the tool globally
+dart pub global activate --source path .
+```
+
+#### Option 3: Use the activation script
+```bash
+# Clone the repository
+git clone <repository-url>
+cd flutter_scaffold
+
+# Run the activation script
+./activate.sh
 ```
 
 ## 🚀 Quick Start
