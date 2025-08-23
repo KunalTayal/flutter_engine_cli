@@ -1,7 +1,7 @@
 name: flutter_scaffold
 description: A powerful CLI to bootstrap and manage scalable, feature-first Flutter projects.
 version: 1.0.1
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/KunalTayal/flutter_scaffold
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
