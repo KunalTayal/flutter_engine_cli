@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.1] - 2024-01-XX
+## [1.0.0] - 2024-01-XX
 
 ### Added
 - Interactive setup process for project initialization

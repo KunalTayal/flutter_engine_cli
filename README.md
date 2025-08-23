@@ -381,7 +381,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🆕 Version History
 
-### v1.0.1
+### v1.0.0
 - Added comprehensive error handling
 - Improved interactive prompts
 - Enhanced template generation
