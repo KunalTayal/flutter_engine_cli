@@ -158,9 +158,45 @@ class InitCommand extends Command<void> {
     }
   }
 
+// Function to dynamically get the Flutter executable path based on the OS
+  Future<String?> _getFlutterExecutable() async {
+    if (Platform.isWindows) {
+      try {
+        // On Windows, the command is flutter.bat. We try to find its full path.
+        final result = await Process.run('where', ['flutter.bat']);
+        if (result.exitCode == 0) {
+          // The output is the path, split by newlines. We take the first one.
+          final path = result.stdout.toString().trim().split('\n').first;
+          print('Found Flutter executable at: $path');
+          return path;
+        }
+      } catch (e) {
+        // Fallback in case 'where' command fails.
+        print(
+            'Could not find flutter.bat using "where". Falling back to "flutter.bat" command.');
+      }
+      // Final fallback
+      return 'flutter.bat';
+    } else if (Platform.isMacOS || Platform.isLinux) {
+      // On macOS and Linux, the command is simply 'flutter'
+      return 'flutter';
+    }
+
+    // If the OS is not recognized, print a warning and return null.
+    print('Warning: Running on an unsupported platform.');
+    return null;
+  }
+
   Future<void> _addDependencies(bool withRiverpod, bool withBloc, bool withDio,
       bool withGoRouter, bool withHive) async {
     print('\n📦 Adding required dependencies...');
+
+    // Get the correct executable path once
+    final flutterExecutable = await _getFlutterExecutable();
+    if (flutterExecutable == null) {
+      print('❌ Cannot proceed. Flutter executable not found for this OS.');
+      exit(1);
+    }
 
     try {
       // Group common dependencies into a single call for efficiency
@@ -172,7 +208,8 @@ class InitCommand extends Command<void> {
       if (withHive) commonDeps.addAll(['hive', 'hive_flutter']);
 
       if (commonDeps.isNotEmpty) {
-        await FileUtils.runCommand('flutter', ['pub', 'add', ...commonDeps]);
+        await FileUtils.runCommand(
+            flutterExecutable, ['pub', 'add', ...commonDeps]);
       }
 
       // Handle dev dependencies separately
@@ -181,10 +218,14 @@ class InitCommand extends Command<void> {
         devDeps.addAll(['hive_generator', 'build_runner']);
       }
 
-      if (devDeps.isNotEmpty) {
+      // Add dev dependencies one by one
+      for (final dep in devDeps) {
+        print('Adding dev dependency $dep...');
         await FileUtils.runCommand(
-            'flutter', ['pub', 'add', '--dev', ...devDeps]);
+            flutterExecutable, ['pub', 'add', '--dev', dep]);
       }
+
+      print('\n✅ All dependencies added successfully!');
     } on ProcessException catch (e) {
       print('\n❌ An error occurred while adding dependencies.'.red().bold());
       print('The command "${e.executable} ${e.arguments.join(' ')}" failed.'
