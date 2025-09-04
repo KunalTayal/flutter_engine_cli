@@ -13,8 +13,8 @@ Flutter Scaffold is a comprehensive CLI tool designed to bootstrap and manage sc
 - ✅ Created modular command structure
 
 ### 2. **Core Commands Implemented**
-- ✅ `flutter_scaffold init` - Project initialization with Clean Architecture
-- ✅ `flutter_scaffold add` - Feature addition with complete structure (supports both interactive and command-line modes)
+- ✅ `flutter_scaffold_cli init` - Project initialization with Clean Architecture
+- ✅ `flutter_scaffold_cli add` - Feature addition with complete structure (supports both interactive and command-line modes)
 - ✅ Interactive prompts for configuration options
 - ✅ Automatic dependency management
 
@@ -49,9 +49,9 @@ Flutter Scaffold is a comprehensive CLI tool designed to bootstrap and manage sc
 
 ### Project Structure
 ```
-flutter_scaffold/
+flutter_scaffold_cli/
 ├── bin/
-│   └── flutter_scaffold.dart          # CLI entry point
+│   └── flutter_scaffold_cli.dart          # CLI entry point
 ├── lib/
 │   └── src/
 │       ├── command_runner.dart        # Main command orchestrator
@@ -104,7 +104,7 @@ flutter_scaffold/
 ```bash
 # Clone and activate
 git clone <repository-url>
-cd flutter_scaffold
+cd flutter_scaffold_cli
 ./activate.sh
 
 # Or manually
@@ -117,19 +117,19 @@ dart pub global activate --source path .
 # Initialize a new Flutter project
 flutter create my_app
 cd my_app
-flutter_scaffold init
+flutter_scaffold_cli init
 
 # Add features (interactive mode)
-flutter_scaffold add
+flutter_scaffold_cli add
 
 # Or add features with command-line arguments
-flutter_scaffold add --name auth --state riverpod --with-g-routes
-flutter_scaffold add --name products --state bloc --with-g-routes
+flutter_scaffold_cli add --name auth --state riverpod --with-g-routes
+flutter_scaffold_cli add --name products --state bloc --with-g-routes
 ```
 
 ## 📊 Generated Project Structure
 
-After running `flutter_scaffold init`, you get:
+After running `flutter_scaffold_cli init`, you get:
 
 ```
 lib/
@@ -243,7 +243,7 @@ The tool automatically adds these dependencies based on user choices:
 
 ## 🚀 Ready for Production
 
-The flutter_scaffold tool is production-ready and provides:
+The flutter_scaffold_cli tool is production-ready and provides:
 
 1. **Scalable Architecture**: Clean Architecture principles for maintainable code
 2. **Feature-First Organization**: Modular feature-based structure

@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
-import 'package:flutter_scaffold/src/commands/add_feature_command.dart';
-import 'package:flutter_scaffold/src/templates/core_templates.dart';
-import 'package:flutter_scaffold/src/utils/file_utils.dart';
+import 'package:flutter_scaffold_cli/src/commands/add_feature_command.dart';
+import 'package:flutter_scaffold_cli/src/templates/core_templates.dart';
+import 'package:flutter_scaffold_cli/src/utils/file_utils.dart';
 import 'package:tint/tint.dart';
 
 class InitCommand extends Command<void> {

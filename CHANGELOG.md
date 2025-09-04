@@ -34,7 +34,7 @@ All notable changes to this project will be documented in this file.
 ## [1.0.0] - 2024-01-XX
 
 ### Added
-- Initial release of flutter_scaffold CLI tool
+- Initial release of flutter_scaffold_cli CLI tool
 - Basic init command for project initialization
 - Add feature command for creating new features
 - Core template generation system

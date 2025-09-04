@@ -1,5 +1,5 @@
 // lib/src/templates/feature_templates.dart
-import 'package:flutter_scaffold/src/utils/file_utils.dart';
+import 'package:flutter_scaffold_cli/src/utils/file_utils.dart';
 
 class FeatureTemplates {
   static String entity(String name) => '''
