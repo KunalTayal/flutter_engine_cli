@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:flutter_scaffold_cli/src/commands/add_feature_command.dart';
 import 'package:flutter_scaffold_cli/src/templates/core_templates.dart';
+import 'package:flutter_scaffold_cli/src/templates/ffi_templates.dart';
+import 'package:flutter_scaffold_cli/src/templates/rust_templates.dart';
 import 'package:flutter_scaffold_cli/src/utils/file_utils.dart';
 import 'package:tint/tint.dart';
 
@@ -32,16 +34,21 @@ class InitCommand extends Command<void> {
         await _askYesNo('Do you want to add go_router for navigation? (y/n): ');
     final withHive =
         await _askYesNo('Do you want to add Hive for local storage? (y/n): ');
+    final withFfi = await _askYesNo(
+        'Do you want to add Rust FFI for high-performance JSON and image processing? (y/n): ');
 
     final withRiverpod = stateManagement == 'riverpod';
     final withBloc = stateManagement == 'bloc';
 
     // Create core structure
-    await _createCoreStructure(withDio, withGoRouter, withHive, projectName);
+    await _createCoreStructure(
+        withDio, withGoRouter, withHive, withFfi, projectName);
 
     // Create main.dart
-    await FileUtils.createFile('lib/main.dart',
-        CoreTemplates.mainDart(withRiverpod, withGoRouter, projectName));
+    await FileUtils.createFile(
+        'lib/main.dart',
+        CoreTemplates.mainDart(
+            withRiverpod, withGoRouter, withFfi, projectName));
 
     // Create features folder
     await FileUtils.createFolder('lib/features');
@@ -56,9 +63,14 @@ class InitCommand extends Command<void> {
       withGoRouter: withGoRouter,
     );
 
+    // Create Rust files if FFI is enabled
+    if (withFfi) {
+      await _createRustFiles(projectName);
+    }
+
     // Add dependencies
     await _addDependencies(
-        withRiverpod, withBloc, withDio, withGoRouter, withHive);
+        withRiverpod, withBloc, withDio, withGoRouter, withHive, withFfi);
 
     print('\n🎉 Project initialized successfully!');
     print('Run `flutter pub get` to install dependencies.');
@@ -103,7 +115,7 @@ class InitCommand extends Command<void> {
   }
 
   Future<void> _createCoreStructure(bool withDio, bool withGoRouter,
-      bool withHive, String projectName) async {
+      bool withHive, bool withFfi, String projectName) async {
     final coreFolders = [
       'lib/core/common',
       'lib/core/common/widgets',
@@ -116,6 +128,11 @@ class InitCommand extends Command<void> {
       'lib/core/theme',
       'lib/core/utils',
     ];
+
+    if (withFfi) {
+      coreFolders.add('lib/core/ffi');
+    }
+
     for (final folder in coreFolders) {
       await FileUtils.createFolder(folder);
     }
@@ -156,9 +173,84 @@ class InitCommand extends Command<void> {
       await FileUtils.createFile(
           'lib/core/config/router.dart', CoreTemplates.router(projectName));
     }
+
+    if (withFfi) {
+      // Create FFI files
+      await FileUtils.createFile(
+          'lib/core/ffi/rust_ffi.dart', FfiTemplates.rustFfi(projectName));
+      await FileUtils.createFile('lib/core/common/hybrid_parser.dart',
+          FfiTemplates.hybridParser(projectName));
+      await FileUtils.createFile('lib/core/common/rust_parser.dart',
+          FfiTemplates.rustParser(projectName));
+      await FileUtils.createFile('lib/core/common/image_service.dart',
+          FfiTemplates.imageService(projectName));
+    }
   }
 
-// Function to dynamically get the Flutter executable path based on the OS
+  Future<void> _createRustFiles(String projectName) async {
+    print('\n📦 Creating Rust FFI files...');
+    try {
+      // Create rust directory structure
+      await FileUtils.createFolder('rust');
+      await FileUtils.createFolder('rust/src');
+
+      // Create Cargo.toml
+      await FileUtils.createFile(
+          'rust/Cargo.toml', RustTemplates.cargoToml(projectName));
+
+      // Create build scripts (cross-platform)
+      await FileUtils.createFile(
+          'rust/build.sh', RustTemplates.buildSh(projectName));
+      await FileUtils.createFile(
+          'rust/build.bat', RustTemplates.buildBat(projectName));
+      await FileUtils.createFile('rust/Makefile', RustTemplates.makefile);
+      await FileUtils.createFile('rust/.gitignore', RustTemplates.gitignore);
+
+      // Create documentation
+      await FileUtils.createFile(
+          'rust/README.md', RustTemplates.readme(projectName));
+      await FileUtils.createFile(
+          'rust/QUICK_START.md', RustTemplates.quickStart(projectName));
+
+      // Create Rust source files
+      await FileUtils.createFile('rust/src/lib.rs', RustTemplates.libRs);
+      await FileUtils.createFile(
+          'rust/src/ffi.rs', RustTemplates.ffiRs(projectName));
+      await FileUtils.createFile(
+          'rust/src/json_processing.rs', RustTemplates.jsonProcessingRs);
+      await FileUtils.createFile(
+          'rust/src/image_processing.rs', RustTemplates.imageProcessingRs);
+      await FileUtils.createFile(
+          'rust/src/cache.rs', RustTemplates.cacheRs(projectName));
+
+      // Make build.sh executable on Unix-like systems (macOS, Linux)
+      if (Platform.isMacOS || Platform.isLinux) {
+        try {
+          await Process.run('chmod', ['+x', 'rust/build.sh']);
+        } catch (e) {
+          // Ignore if chmod fails, user can do it manually
+          print(
+              '   Note: Run `chmod +x rust/build.sh` to make the build script executable');
+        }
+      }
+
+      print('✅ Rust FFI files created successfully!');
+      print('   Next steps:');
+      print('   1. Install Rust: https://rustup.rs/');
+      if (Platform.isWindows) {
+        print('   2. Build the library: cd rust && build.bat');
+      } else {
+        print('   2. Build the library: cd rust && ./build.sh');
+      }
+      print('   3. Copy the built library to your platform-specific location');
+      print('   See rust/README.md for detailed instructions.');
+    } catch (e) {
+      print('❌ Error: Failed to create Rust files: \$e');
+      rethrow;
+    }
+  }
+
+  // Function to dynamically get the Flutter executable path based on the OS
   Future<String?> _getFlutterExecutable() async {
     if (Platform.isWindows) {
       try {
@@ -188,7 +280,7 @@ class InitCommand extends Command<void> {
   }
 
   Future<void> _addDependencies(bool withRiverpod, bool withBloc, bool withDio,
-      bool withGoRouter, bool withHive) async {
+      bool withGoRouter, bool withHive, bool withFfi) async {
     print('\n📦 Adding required dependencies...');
 
     // Get the correct executable path once
@@ -206,6 +298,7 @@ class InitCommand extends Command<void> {
       if (withDio) commonDeps.add('dio');
       if (withGoRouter) commonDeps.add('go_router');
       if (withHive) commonDeps.addAll(['hive', 'hive_flutter']);
+      if (withFfi) commonDeps.addAll(['ffi', 'crypto']);
 
       if (commonDeps.isNotEmpty) {
         await FileUtils.runCommand(

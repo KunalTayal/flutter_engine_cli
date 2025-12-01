@@ -1,8 +1,8 @@
 // lib/src/templates/core_templates.dart
 
 class CoreTemplates {
-  static String mainDart(
-          bool withRiverpod, bool withGoRouter, String projectName) =>
+  static String mainDart(bool withRiverpod, bool withGoRouter, bool withFfi,
+          String projectName) =>
       '''
 import 'package:flutter/material.dart';
 import 'package:$projectName/core/config/environment_config.dart';
@@ -10,6 +10,8 @@ import 'package:$projectName/core/theme/app_theme.dart';
 ${withRiverpod ? "import 'package:flutter_riverpod/flutter_riverpod.dart';" : ""}
 import 'package:$projectName/core/di/injector.dart' as di;
 ${withGoRouter ? "import 'package:$projectName/core/config/router.dart';" : "import 'package:$projectName/features/home/presentation/pages/home_page.dart';"}
+${withFfi ? "import 'package:$projectName/core/common/hybrid_parser.dart';" : ""}
+${withFfi ? "import 'package:$projectName/core/common/image_service.dart';" : ""}
 
 
 Future<void> main() async {
@@ -17,6 +19,8 @@ Future<void> main() async {
 
   // Initialize Environment Configuration
   EnvironmentConfig.initialize();
+
+  ${withFfi ? "// Initialize Rust FFI (call once at startup)\n  await HybridParser.initialize();\n  await ImageService.getInstance();" : ""}
 
   // Initialize Dependency Injection
   await di.init();
@@ -377,7 +381,7 @@ class HiveStorageServiceImpl implements StorageService {
 }
 """;
 
-static const String environmentConfigTemplate = """
+  static const String environmentConfigTemplate = """
 import 'package:flutter/foundation.dart';
 
 /// A class to manage environment-specific configurations.
@@ -430,7 +434,7 @@ class EnvironmentConfig {
 }
 """;
 
-static String apiEndpointsTemplate(String projectName) => """
+  static String apiEndpointsTemplate(String projectName) => """
 import 'package:$projectName/core/config/environment_config.dart';
 
 /// A class containing all API endpoint constants.
@@ -451,7 +455,7 @@ class ApiEndpoints {
 
 // --- Constants ---
 
-static const String appColorsTemplate = """
+  static const String appColorsTemplate = """
 import 'package:flutter/material.dart';
 
 /// A class containing color constants for the app.
@@ -479,7 +483,7 @@ class AppColors {
 }
 """;
 
-static const String appStringsTemplate = """
+  static const String appStringsTemplate = """
 /// A class containing string constants for the app.
 class AppStrings {
   AppStrings._();
@@ -498,7 +502,7 @@ class AppStrings {
 }
 """;
 
-static const String appAssetsTemplate = """
+  static const String appAssetsTemplate = """
 /// A class containing constants for asset paths.
 ///
 /// To use these assets, make sure to declare them in pubspec.yaml:
@@ -522,7 +526,7 @@ class AppAssets {
 }
 """;
 
-static const String appTextStylesTemplate = """
+  static const String appTextStylesTemplate = """
 import 'package:flutter/material.dart';
 
 /// A class containing text style constants for the app.
@@ -559,7 +563,7 @@ class AppTextStyles {
 
 // --- Theme ---
 
-static String appThemeTemplate(String projectName) => """
+  static String appThemeTemplate(String projectName) => """
 import 'package:flutter/material.dart';
 import 'package:$projectName/core/constants/app_colors.dart';
 import 'package:$projectName/core/constants/app_text_styles.dart';
