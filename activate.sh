@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Flutter Scaffold Activation Script
-# This script helps you activate the flutter_scaffold_cli CLI tool globally
+# This script helps you activate the flutter_engine_cli CLI tool globally
 
 echo "🚀 Flutter Scaffold Activation Script"
 echo "====================================="
@@ -28,7 +28,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Check if pubspec.yaml exists
 if [ ! -f "$SCRIPT_DIR/pubspec.yaml" ]; then
     echo "❌ Error: pubspec.yaml not found in $SCRIPT_DIR"
-    echo "Please run this script from the flutter_scaffold_cli project root"
+    echo "Please run this script from the flutter_engine_cli project root"
     exit 1
 fi
 
@@ -41,11 +41,11 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-echo "🔧 Activating flutter_scaffold_cli globally..."
+echo "🔧 Activating flutter_engine_cli globally..."
 dart pub global activate --source path .
 
 if [ $? -ne 0 ]; then
-    echo "❌ Error: Failed to activate flutter_scaffold_cli"
+    echo "❌ Error: Failed to activate flutter_engine_cli"
     exit 1
 fi
 
@@ -53,10 +53,10 @@ echo ""
 echo "🎉 Flutter Scaffold activated successfully!"
 echo ""
 echo "You can now use the following commands:"
-echo "  flutter_scaffold_cli init    - Initialize a new Flutter project with Clean Architecture"
-echo "  flutter_scaffold_cli add     - Add a new feature to your project"
+echo "  flutter_engine_cli init    - Initialize a new Flutter project with Clean Architecture"
+echo "  flutter_engine_cli add     - Add a new feature to your project"
 echo ""
 echo "For more information, see the README.md file or run:"
-echo "  flutter_scaffold_cli --help"
+echo "  flutter_engine_cli --help"
 echo ""
 echo "Happy coding! 🚀"

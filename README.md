@@ -26,14 +26,14 @@ Flutter Scaffold is a CLI tool that helps you create and maintain Flutter projec
 
 #### Option 1: Install from pub.dev (Recommended)
 ```bash
-dart pub global activate flutter_scaffold_cli
+dart pub global activate flutter_engine_cli
 ```
 
 #### Option 2: Install from source
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd flutter_scaffold_cli
+cd flutter_engine_cli
 
 # Install dependencies
 dart pub get
@@ -46,7 +46,7 @@ dart pub global activate --source path .
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd flutter_scaffold_cli
+cd flutter_engine_cli
 
 # Run the activation script
 ./activate.sh
@@ -64,7 +64,7 @@ cd my_awesome_app
 ### 2. Initialize with Flutter Scaffold
 
 ```bash
-flutter_scaffold_cli init
+flutter_engine_cli init
 ```
 
 The tool will guide you through an interactive setup process:
@@ -112,12 +112,12 @@ flutter pub get
 
 ```bash
 # Interactive mode - the tool will guide you through the setup
-flutter_scaffold_cli add
+flutter_engine_cli add
 
 # Or use command-line arguments
-flutter_scaffold_cli add --name user_profile --state riverpod --with-g-routes
-flutter_scaffold_cli add --name product_catalog --state bloc --with-g-routes
-flutter_scaffold_cli add --name settings
+flutter_engine_cli add --name user_profile --state riverpod --with-g-routes
+flutter_engine_cli add --name product_catalog --state bloc --with-g-routes
+flutter_engine_cli add --name settings
 ```
 
 ## 🏗️ Architecture Overview
@@ -166,7 +166,7 @@ Flutter Scaffold provides an intuitive interactive command-line interface that g
 
 ## 📋 Available Commands
 
-### `flutter_scaffold_cli init`
+### `flutter_engine_cli init`
 
 Initializes a new Flutter project with Clean Architecture structure.
 
@@ -183,7 +183,7 @@ Initializes a new Flutter project with Clean Architecture structure.
 - Dependencies in `pubspec.yaml`
 - Configured `main.dart`
 
-### `flutter_scaffold_cli add`
+### `flutter_engine_cli add`
 
 Adds a new feature to your project with complete Clean Architecture structure. The command supports both interactive prompts and command-line arguments.
 
@@ -196,7 +196,7 @@ Adds a new feature to your project with complete Clean Architecture structure. T
 If you don't provide arguments, the tool will guide you through an interactive setup:
 
 ```bash
-flutter_scaffold_cli add
+flutter_engine_cli add
 ```
 
 **Interactive Process:**
@@ -211,16 +211,16 @@ Do you want to generate a route for this feature using go_router? (y/n) [n]: y
 **Command-Line Examples:**
 ```bash
 # Basic feature without state management
-flutter_scaffold_cli add --name user_profile
+flutter_engine_cli add --name user_profile
 
 # Feature with Riverpod state management
-flutter_scaffold_cli add --name product_catalog --state riverpod
+flutter_engine_cli add --name product_catalog --state riverpod
 
 # Feature with BLoC state management and routing
-flutter_scaffold_cli add --name checkout --state bloc --with-g-routes
+flutter_engine_cli add --name checkout --state bloc --with-g-routes
 
 # Interactive mode (no arguments)
-flutter_scaffold_cli add
+flutter_engine_cli add
 ```
 
 ## 🎨 Generated Code Structure
@@ -350,7 +350,7 @@ The tool automatically adds these dependencies based on your choices:
 ## 🚀 Best Practices
 
 ### Feature Development
-1. **One feature per command**: Use `flutter_scaffold_cli add` for each feature
+1. **One feature per command**: Use `flutter_engine_cli add` for each feature
 2. **Consistent naming**: Use snake_case for feature names
 3. **State management**: Choose the same pattern across features for consistency
 4. **Routing**: Use `--with-g-routes` for features that need navigation
