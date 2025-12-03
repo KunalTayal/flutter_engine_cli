@@ -1,10 +1,10 @@
-# Flutter Scaffold 🚀
+# Flutter Engine CLI 🚀
 
 A powerful command-line tool to bootstrap and manage scalable, feature-first Flutter projects with Clean Architecture principles.
 
-## 🎯 What is Flutter Scaffold?
+## 🎯 What is Flutter Engine CLI?
 
-Flutter Scaffold is a CLI tool that helps you create and maintain Flutter projects following Clean Architecture patterns. It automatically generates:
+Flutter Engine CLI is a CLI tool that helps you create and maintain Flutter projects following Clean Architecture patterns. It automatically generates:
 
 - **Clean Architecture folder structure** with proper separation of concerns
 - **Feature-based organization** for scalable codebases
@@ -61,7 +61,7 @@ flutter create my_awesome_app
 cd my_awesome_app
 ```
 
-### 2. Initialize with Flutter Scaffold
+### 2. Initialize with Flutter Engine CLI
 
 ```bash
 flutter_engine_cli init
@@ -122,7 +122,7 @@ flutter_engine_cli add --name settings
 
 ## 🏗️ Architecture Overview
 
-Flutter Scaffold follows Clean Architecture principles with a feature-first approach:
+Flutter Engine CLI follows Clean Architecture principles with a feature-first approach:
 
 ```
 lib/
@@ -156,7 +156,7 @@ lib/
 
 ## 🎯 Interactive CLI Experience
 
-Flutter Scaffold provides an intuitive interactive command-line interface that guides you through the setup process. Both commands support interactive prompts when arguments are not provided.
+Flutter Engine CLI provides an intuitive interactive command-line interface that guides you through the setup process. Both commands support interactive prompts when arguments are not provided.
 
 ### Interactive Features:
 - **Guided Setup**: Step-by-step prompts for configuration options

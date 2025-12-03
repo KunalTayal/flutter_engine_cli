@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Flutter Scaffold Activation Script
+# Flutter Engine CLI Activation Script
 # This script helps you activate the flutter_engine_cli CLI tool globally
 
-echo "🚀 Flutter Scaffold Activation Script"
+echo "🚀 Flutter Engine CLI Activation Script"
 echo "====================================="
 
 # Check if Dart is installed
@@ -50,7 +50,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo ""
-echo "🎉 Flutter Scaffold activated successfully!"
+echo "🎉 Flutter Engine CLI activated successfully!"
 echo ""
 echo "You can now use the following commands:"
 echo "  flutter_engine_cli init    - Initialize a new Flutter project with Clean Architecture"
