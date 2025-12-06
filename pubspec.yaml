@@ -1,6 +1,6 @@
 name: flutter_engine_cli
 description: A powerful CLI to bootstrap and manage scalable, feature-first Flutter projects.
-version: 1.0.1
+version: 1.0.0
 repository: https://github.com/KunalTayal/flutter_engine_cli
 
 environment:
