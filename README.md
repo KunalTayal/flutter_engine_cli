@@ -15,6 +15,7 @@ Flutter Engine CLI is a CLI tool that helps you create and maintain Flutter proj
 - **Dependency injection** with GetIt
 - **Error handling** and failure management
 - **Theme and styling** infrastructure
+- **Rust FFI integration** for high-performance JSON and image processing (optional)
 
 ## 📦 Installation
 
@@ -24,32 +25,8 @@ Flutter Engine CLI is a CLI tool that helps you create and maintain Flutter proj
 
 ### Install the CLI tool
 
-#### Option 1: Install from pub.dev (Recommended)
 ```bash
 dart pub global activate flutter_engine_cli
-```
-
-#### Option 2: Install from source
-```bash
-# Clone the repository
-git clone <repository-url>
-cd flutter_engine_cli
-
-# Install dependencies
-dart pub get
-
-# Activate the tool globally
-dart pub global activate --source path .
-```
-
-#### Option 3: Use the activation script
-```bash
-# Clone the repository
-git clone <repository-url>
-cd flutter_engine_cli
-
-# Run the activation script
-./activate.sh
 ```
 
 ## 🚀 Quick Start
@@ -82,6 +59,7 @@ Enter your choice (1-3): 2
 Do you want to add Dio for advanced network requests? (y/n): y
 Do you want to add go_router for navigation? (y/n): y
 Do you want to add Hive for local storage? (y/n): y
+Do you want to add Rust FFI for high-performance JSON and image processing? (y/n): y
 
 📦 Adding required dependencies...
 ✅ Created folder: lib/core/common
@@ -135,7 +113,8 @@ lib/
 │   ├── network/                    # Network layer
 │   ├── storage/                    # Local storage
 │   ├── theme/                      # App theming
-│   └── utils/                      # Utility functions
+│   ├── utils/                      # Utility functions
+│   └── ffi/                        # Rust FFI integration (if enabled)
 ├── features/                       # Feature modules
 │   ├── home/                       # Home feature
 │   │   ├── data/                   # Data layer
@@ -152,6 +131,19 @@ lib/
 │   │       └── widgets/            # Feature-specific widgets
 │   └── [other_features]/           # Other features
 └── main.dart                       # App entry point
+rust/                               # Rust FFI project (if enabled)
+├── Cargo.toml                     # Rust project configuration
+├── build.sh                        # Build script (Unix)
+├── build.bat                       # Build script (Windows)
+├── Makefile                        # Makefile for building
+├── README.md                       # Rust FFI documentation
+├── QUICK_START.md                  # Quick start guide
+└── src/                            # Rust source code
+    ├── lib.rs                      # Main library file
+    ├── ffi.rs                      # FFI bindings
+    ├── json_processing.rs          # JSON processing logic
+    ├── image_processing.rs         # Image processing logic
+    └── cache.rs                    # Caching implementation
 ```
 
 ## 🎯 Interactive CLI Experience
@@ -175,6 +167,7 @@ Initializes a new Flutter project with Clean Architecture structure.
 - **Network Layer**: Add Dio for HTTP requests
 - **Navigation**: Add Go Router for navigation
 - **Local Storage**: Add Hive for local data persistence
+- **Rust FFI**: Add Rust FFI for high-performance JSON and image processing
 
 **What it creates:**
 - Complete folder structure following Clean Architecture
@@ -261,6 +254,35 @@ class ServerFailure extends Failure {}
 class CacheFailure extends Failure {}
 ```
 
+#### Rust FFI Integration (`lib/core/ffi/rust_ffi.dart`) - When FFI is enabled
+```dart
+import 'dart:ffi';
+import 'package:ffi/ffi.dart';
+
+class RustFFI {
+  static Future<RustFFI> getInstance() async { ... }
+  
+  // High-performance JSON operations
+  String jsonDecode(String json);
+  String jsonEncode(String data);
+  
+  // Image processing
+  int processImage(String imagePath, String outputPath, int width, int height, int quality);
+  String? getOrCacheImage(String imagePath, String cacheKey, int width, int height, int quality);
+}
+```
+
+#### Hybrid Parser (`lib/core/common/hybrid_parser.dart`) - When FFI is enabled
+```dart
+class HybridParser<T, R> {
+  final String json;
+  final ParseFunction<R> parseFunction;
+  
+  // Parse JSON using Rust FFI in an isolate for non-blocking performance
+  Future<R> parse() async { ... }
+}
+```
+
 ### Feature Structure
 
 Each feature follows the same pattern:
@@ -320,6 +342,34 @@ When Hive is selected:
 - Creates storage service abstraction
 - Sets up data persistence utilities
 
+### Rust FFI Integration
+
+When Rust FFI is selected:
+- Creates complete Rust project structure with Cargo.toml
+- Generates Rust FFI bindings for JSON and image processing
+- Sets up hybrid parser that uses Rust in isolates for non-blocking performance
+- Creates image service with caching capabilities
+- Provides cross-platform build scripts (build.sh, build.bat, Makefile)
+- Generates comprehensive documentation (README.md, QUICK_START.md)
+
+**Features:**
+- **High-performance JSON processing**: Rust-powered JSON parsing and encoding
+- **Image processing**: Resize, compress, and cache images efficiently
+- **Image caching**: Smart caching system for processed images
+- **Isolate-based execution**: Non-blocking operations using Dart isolates
+
+**Requirements:**
+- Rust toolchain (install from https://rustup.rs/)
+- Platform-specific build tools (varies by OS)
+
+**Setup Steps:**
+1. Install Rust: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+2. Build the library:
+   - Windows: `cd rust && build.bat`
+   - macOS/Linux: `cd rust && ./build.sh`
+3. Copy the built library to your platform-specific location
+4. See `rust/README.md` for detailed platform-specific instructions
+
 ## 📦 Dependencies
 
 The tool automatically adds these dependencies based on your choices:
@@ -342,6 +392,10 @@ The tool automatically adds these dependencies based on your choices:
 
 ### Storage
 - `hive` & `hive_flutter`: Local storage
+
+### FFI (when Rust FFI is enabled)
+- `ffi`: Foreign Function Interface for native code integration
+- `crypto`: Cryptographic hashing for cache keys
 
 ### Development Dependencies
 - `hive_generator`: Hive code generation
@@ -384,12 +438,21 @@ The tool automatically adds these dependencies based on your choices:
 - Use underscores instead of hyphens or spaces
 - Example: `user_profile` ✅, `user-profile` ❌
 
+#### Rust FFI Build Issues
+- Ensure Rust is installed: `rustc --version`
+- Check that build scripts are executable: `chmod +x rust/build.sh` (Unix)
+- Verify platform-specific build tools are installed
+- Review `rust/README.md` for platform-specific requirements
+- For Android: Ensure NDK is properly configured
+- For iOS: Ensure Xcode command-line tools are installed
+
 ### Getting Help
 
 1. Check the generated code structure
 2. Review the template files in `lib/src/templates/`
 3. Verify your Flutter and Dart versions
 4. Check the project's `pubspec.yaml` for dependency conflicts
+5. For Rust FFI issues, check `rust/README.md` and ensure Rust is properly installed
 
 ## 🤝 Contributing
 
@@ -406,14 +469,16 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 🆕 Version History
 
 ### v1.0.0
+- **Rust FFI Integration**: Added optional Rust FFI support for high-performance JSON and image processing
+- **Hybrid Parser**: Implemented isolate-based hybrid parser for non-blocking JSON operations
+- **Image Service**: Added image processing and caching service with Rust backend
+- **Cross-platform Build Scripts**: Generated build scripts for Windows, macOS, and Linux
+- **Comprehensive Documentation**: Auto-generated Rust project documentation
 - Added comprehensive error handling
 - Improved interactive prompts
 - Enhanced template generation
 - Added support for multiple state management options
-
-### v1.0.0
-- Initial release
-- Basic init and add feature commands
+- Initial release with basic init and add feature commands
 - Clean Architecture template generation
 - State management integration
 
