@@ -1,24 +1,19 @@
 // lib/src/templates/core_templates.dart
 
 class CoreTemplates {
-  static String mainDart(bool withRiverpod, bool withGoRouter, bool withFfi,
-          String projectName) =>
+  static String mainDart(bool withRiverpod, bool withDio, bool withGoRouter,
+          bool withFfi, String projectName) =>
       '''
 import 'package:flutter/material.dart';
-import 'package:$projectName/core/config/environment_config.dart';
 import 'package:$projectName/core/theme/app_theme.dart';
-${withRiverpod ? "import 'package:flutter_riverpod/flutter_riverpod.dart';" : ""}
 import 'package:$projectName/core/di/injector.dart' as di;
-${withGoRouter ? "import 'package:$projectName/core/config/router.dart';" : "import 'package:$projectName/features/home/presentation/pages/home_page.dart';"}
-${withFfi ? "import 'package:$projectName/core/common/hybrid_parser.dart';" : ""}
-${withFfi ? "import 'package:$projectName/core/common/image_service.dart';" : ""}
+${withDio ? "import 'package:$projectName/core/config/environment_config.dart';\n" : ""}${withRiverpod ? "import 'package:flutter_riverpod/flutter_riverpod.dart';\n" : ""}${withGoRouter ? "import 'package:$projectName/core/config/router.dart';\n" : "import 'package:$projectName/features/home/presentation/pages/home_page.dart';\n"}${withFfi ? "import 'package:$projectName/core/common/hybrid_parser.dart';\n" : ""}${withFfi ? "import 'package:$projectName/core/common/image_service.dart';\n" : ""}
 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Environment Configuration
-  EnvironmentConfig.initialize();
+  ${withDio ? "// Initialize Environment Configuration\n  EnvironmentConfig.initialize();" : ""}
 
   ${withFfi ? "// Initialize Rust FFI (call once at startup)\n  await HybridParser.initialize();\n  await ImageService.getInstance();" : ""}
 
@@ -33,7 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp${withGoRouter ? '.router' : ''}(
-      title: EnvironmentConfig.appTitle, // Use title from config
+      title: ${withDio ? "EnvironmentConfig.appTitle" : "'My App'"}, // Use title from config
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
@@ -46,10 +41,7 @@ class MyApp extends StatelessWidget {
   static String injector(bool withDio, bool withGoRouter, String projectName) =>
       '''
 import 'package:get_it/get_it.dart';
-${withDio ? "import 'package:dio/dio.dart';" : ""}
-${withDio ? "import 'package:$projectName/core/network/api_client.dart';" : ""}
-${withGoRouter ? "import 'package:go_router/go_router.dart';" : ""}
-${withGoRouter ? "import 'package:$projectName/core/config/router.dart';" : ""}
+${withDio ? "import 'package:dio/dio.dart';\n" : ""}${withDio ? "import 'package:$projectName/core/network/api_client.dart';\n" : ""}${withGoRouter ? "import 'package:go_router/go_router.dart';\n" : ""}${withGoRouter ? "import 'package:$projectName/core/config/router.dart';\n" : ""}
 
 final sl = GetIt.instance;
 
