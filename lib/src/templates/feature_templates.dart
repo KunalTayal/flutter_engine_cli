@@ -130,12 +130,7 @@ class Get${name.toPascalCase()}Data {
           String projectName) =>
       '''
 import 'package:flutter/material.dart';
-${stateManagement == 'riverpod' ? "import 'package:flutter_riverpod/flutter_riverpod.dart';" : ""}
-${stateManagement == 'bloc' ? "import 'package:flutter_bloc/flutter_bloc.dart';" : ""}
-${stateManagement == 'bloc' ? "import 'package:$projectName/features/$name/presentation/state/${name}_bloc.dart';" : ""}
-${stateManagement == 'bloc' ? "import 'package:$projectName/features/$name/presentation/state/${name}_event.dart';" : ""}
-${stateManagement == 'bloc' ? "import 'package:$projectName/features/$name/presentation/state/${name}_state.dart';" : ""}
-${stateManagement == 'riverpod' ? "import 'package:$projectName/features/$name/presentation/state/${name}_providers.dart';" : ""}
+${stateManagement == 'riverpod' ? "import 'package:flutter_riverpod/flutter_riverpod.dart';\n" : ""}${stateManagement == 'bloc' ? "import 'package:flutter_bloc/flutter_bloc.dart';\n" : ""}${stateManagement == 'bloc' ? "import 'package:$projectName/features/$name/presentation/state/${name}_bloc.dart';\n" : ""}${stateManagement == 'bloc' ? "import 'package:$projectName/features/$name/presentation/state/${name}_event.dart';\n" : ""}${stateManagement == 'bloc' ? "import 'package:$projectName/features/$name/presentation/state/${name}_state.dart';\n" : ""}${stateManagement == 'riverpod' ? "import 'package:$projectName/features/$name/presentation/state/${name}_providers.dart';\n" : ""}
 
 class ${name.toPascalCase()}Page extends StatelessWidget {
   ${withGoRouter ? "static const routeName = '${name.toLowerCase()}';" : ""}

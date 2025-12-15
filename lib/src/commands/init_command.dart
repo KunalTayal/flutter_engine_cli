@@ -48,7 +48,7 @@ class InitCommand extends Command<void> {
     await FileUtils.createFile(
         'lib/main.dart',
         CoreTemplates.mainDart(
-            withRiverpod, withGoRouter, withFfi, projectName));
+            withRiverpod, withDio, withGoRouter, withFfi, projectName));
 
     // Create features folder
     await FileUtils.createFolder('lib/features');
