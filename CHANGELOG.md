@@ -1,8 +1,17 @@
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.0] - 2024-01-15
+## 1.0.1
+
+### Changed & Bug Fixes
+- Enhance `InitCommand` and `CoreTemplates` to support Dio integration.
+- Modify feature templates to reflect changes in state management imports for improved flexibility.
+- Refactor main initialisation logic in `core_templates.dart` to improve readability and maintainability.
+- Consolidate Dio and FFI initialisation comments for better clarity.
+
+## 1.0.0
 
 ### Added
 - Initial release of Flutter Engine CLI
