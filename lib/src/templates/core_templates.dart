@@ -8,15 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:$projectName/core/theme/app_theme.dart';
 import 'package:$projectName/core/di/injector.dart' as di;
 ${withDio ? "import 'package:$projectName/core/config/environment_config.dart';\n" : ""}${withRiverpod ? "import 'package:flutter_riverpod/flutter_riverpod.dart';\n" : ""}${withGoRouter ? "import 'package:$projectName/core/config/router.dart';\n" : "import 'package:$projectName/features/home/presentation/pages/home_page.dart';\n"}${withFfi ? "import 'package:$projectName/core/common/hybrid_parser.dart';\n" : ""}${withFfi ? "import 'package:$projectName/core/common/image_service.dart';\n" : ""}
-
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  ${withDio ? "// Initialize Environment Configuration\n  EnvironmentConfig.initialize();" : ""}
-
-  ${withFfi ? "// Initialize Rust FFI (call once at startup)\n  await HybridParser.initialize();\n  await ImageService.getInstance();" : ""}
-
+  ${withDio ? "\n// Initialize Environment Configuration\n  EnvironmentConfig.initialize();\n" : ""}${withFfi ? "\n// Initialize Rust FFI (call once at startup)\n  await HybridParser.initialize();\n  await ImageService.getInstance();\n" : ""}
   // Initialize Dependency Injection
   await di.init();
   runApp(${withRiverpod ? 'const ProviderScope(child: MyApp())' : 'const MyApp()'});
@@ -42,21 +36,17 @@ class MyApp extends StatelessWidget {
       '''
 import 'package:get_it/get_it.dart';
 ${withDio ? "import 'package:dio/dio.dart';\n" : ""}${withDio ? "import 'package:$projectName/core/network/api_client.dart';\n" : ""}${withGoRouter ? "import 'package:go_router/go_router.dart';\n" : ""}${withGoRouter ? "import 'package:$projectName/core/config/router.dart';\n" : ""}
-
 final sl = GetIt.instance;
 
 Future<void> init() async {
   // External Dependencies
-  ${withDio ? "sl.registerLazySingleton<Dio>(() => Dio());" : ""}
+  ${withGoRouter ? "sl.registerLazySingleton(() => GoRouter(routes: router.configuration.routes,),);\n" : ""}${withDio ? "sl.registerLazySingleton<Dio>(() => Dio());" : ""}
 
   // Core
   ${withDio ? "sl.registerLazySingleton<ApiClient>(() => ApiClientImpl(dio: sl()));" : ""}
 
-  // Features
   // Register your feature dependencies here
 
-  // External
-  ${withGoRouter ? "sl.registerLazySingleton(() => GoRouter(routes: router.configuration.routes,),);" : ""}
 }
 ''';
 
