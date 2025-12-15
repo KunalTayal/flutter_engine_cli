@@ -131,10 +131,8 @@ class Get${name.toPascalCase()}Data {
       '''
 import 'package:flutter/material.dart';
 ${stateManagement == 'riverpod' ? "import 'package:flutter_riverpod/flutter_riverpod.dart';\n" : ""}${stateManagement == 'bloc' ? "import 'package:flutter_bloc/flutter_bloc.dart';\n" : ""}${stateManagement == 'bloc' ? "import 'package:$projectName/features/$name/presentation/state/${name}_bloc.dart';\n" : ""}${stateManagement == 'bloc' ? "import 'package:$projectName/features/$name/presentation/state/${name}_event.dart';\n" : ""}${stateManagement == 'bloc' ? "import 'package:$projectName/features/$name/presentation/state/${name}_state.dart';\n" : ""}${stateManagement == 'riverpod' ? "import 'package:$projectName/features/$name/presentation/state/${name}_providers.dart';\n" : ""}
-
 class ${name.toPascalCase()}Page extends StatelessWidget {
-  ${withGoRouter ? "static const routeName = '${name.toLowerCase()}';" : ""}
-  const ${name.toPascalCase()}Page({super.key});
+  ${withGoRouter ? "static const routeName = '${name.toLowerCase()}';\n" : ""}const ${name.toPascalCase()}Page({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +144,6 @@ class ${name.toPascalCase()}Page extends StatelessWidget {
     );
   }
 }
-
 ${stateManagement == 'riverpod' ? '''
 class _${name.toPascalCase()}View extends ConsumerWidget {
   const _${name.toPascalCase()}View();
@@ -162,9 +159,7 @@ class _${name.toPascalCase()}View extends ConsumerWidget {
     );
   }
 }
-''' : ''}
-
-${stateManagement == 'bloc' ? '''
+''' : ''}${stateManagement == 'bloc' ? '''
 class _${name.toPascalCase()}View extends StatelessWidget {
   const _${name.toPascalCase()}View();
   
