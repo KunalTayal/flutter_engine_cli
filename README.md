@@ -468,7 +468,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 🆕 Version History
 
-### v1.0.0
+### v1.0.1
 - **Rust FFI Integration**: Added optional Rust FFI support for high-performance JSON and image processing
 - **Hybrid Parser**: Implemented isolate-based hybrid parser for non-blocking JSON operations
 - **Image Service**: Added image processing and caching service with Rust backend
