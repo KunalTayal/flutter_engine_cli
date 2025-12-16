@@ -193,8 +193,8 @@ class _${name.toPascalCase()}View extends StatelessWidget {
 
   static String riverpodProvider(String name, String projectName) => '''
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:$projectName/features/$name/domain/usecases/get_${name}_data.dart';
-// import 'package:$projectName/core/di/injector.dart'; // Assuming GetIt for Usecase injection
+import 'package:$projectName/features/$name/domain/usecases/get_${name}_data.dart';
+import 'package:$projectName/core/di/injector.dart'; // Assuming GetIt for Usecase injection
 
 // This is a placeholder for where you would set up your use case provider.
 // You'll need to register Get${name.toPascalCase()}Data in your GetIt injector.
