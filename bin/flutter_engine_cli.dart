@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter_engine_cli/src/command_runner.dart';
 
 Future<void> main(List<String> args) async {
-  print('--- RUNNING UPDATED VERSION 1.0.0 ---');
+  print('--- RUNNING UPDATED VERSION 1.0.1 ---');
   try {
     await FlutterScaffoldCommandRunner().run(args);
     exit(0);
