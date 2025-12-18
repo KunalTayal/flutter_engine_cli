@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.2
+
+### Changed & Bug Fixes
+- Fix the `feature_templates.dart` file by uncommenting the necessary import statements for integration with Riverpod state management
+
 ## 1.0.1
 
 ### Changed & Bug Fixes
