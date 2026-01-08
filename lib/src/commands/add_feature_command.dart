@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:flutter_engine_cli/src/templates/core_templates.dart';
 import 'package:flutter_engine_cli/src/templates/feature_templates.dart';
 import 'package:flutter_engine_cli/src/utils/file_utils.dart';
 
@@ -127,6 +128,11 @@ class AddFeatureCommand extends Command<void> {
       await FileUtils.createFolder(folder);
     }
 
+    // Router
+    if (withGoRouter) {
+      await _updateRouter(name, projectName);
+    }
+
     // Domain Layer
     await FileUtils.createFile(
         '$featurePath/domain/entities/${name}_entity.dart',
@@ -168,5 +174,97 @@ class AddFeatureCommand extends Command<void> {
           '$featurePath/presentation/state/${name}_state.dart',
           FeatureTemplates.blocState(name, projectName));
     }
+  }
+
+  /// Updates the router.dart file to add a new feature route.
+  /// Creates the file if it doesn't exist.
+  Future<void> _updateRouter(String featureName, String projectName) async {
+    const routerPath = 'lib/core/config/router.dart';
+    final routerFile = File(routerPath);
+
+    // If router doesn't exist, create it
+    if (!await routerFile.exists()) {
+      await FileUtils.createFolder('lib/core/config');
+      await FileUtils.createFile(routerPath, CoreTemplates.router(projectName));
+    }
+
+    // Read existing router content
+    final content = await routerFile.readAsString();
+
+    // Convert feature name to PascalCase for class names
+    final featurePascalCase = featureName.toPascalCase();
+    final featureRouteName = featureName.toLowerCase();
+    final pagePath =
+        'package:$projectName/features/$featureName/presentation/pages/${featureName}_page.dart';
+
+    // Check if import and route already exist
+    final importPattern =
+        RegExp(r"import 'package:$projectName/features/$featureName/");
+    final existingRoutePattern = RegExp(r"path: '/$featureRouteName'");
+    if (importPattern.hasMatch(content) ||
+        existingRoutePattern.hasMatch(content)) {
+      print('⚠️  Router already contains route for $featureName feature');
+      return;
+    }
+
+    // Add import after the home import or after the TODO comment
+    String updatedContent = content;
+    final importRegex = RegExp(
+        r"(import 'package:$projectName/features/home/presentation/pages/home_page\.dart';)");
+    if (importRegex.hasMatch(content)) {
+      updatedContent = content.replaceFirstMapped(
+        importRegex,
+        (match) => '${match.group(1)}\nimport \'$pagePath\';',
+      );
+    } else {
+      // If home import not found, add after the go_router import
+      final goRouterImportRegex =
+          RegExp(r"(import 'package:go_router/go_router\.dart';)");
+      if (goRouterImportRegex.hasMatch(content)) {
+        updatedContent = content.replaceFirstMapped(
+          goRouterImportRegex,
+          (match) => '${match.group(1)}\nimport \'$pagePath\';',
+        );
+      }
+    }
+
+    // Add route before the closing bracket of routes array
+    final routePattern = RegExp(
+        r'(\s+// TODO: Add other feature routes here[^\n]*\n)',
+        multiLine: true);
+    final routeDefinition = '\n    GoRoute(\n'
+        '      path: \'/$featureRouteName\',\n'
+        '      name: ${featurePascalCase}Page.routeName,\n'
+        '      builder: (context, state) => const ${featurePascalCase}Page(),\n'
+        '    ),\n';
+
+    if (routePattern.hasMatch(updatedContent)) {
+      // Replace TODO comment with route
+      updatedContent = updatedContent.replaceFirst(
+        routePattern,
+        routeDefinition,
+      );
+    } else {
+      // Find the closing bracket of routes array and add route before it
+      final routesClosingPattern = RegExp(r'(\s+)(\],)', multiLine: true);
+      if (routesClosingPattern.hasMatch(updatedContent)) {
+        updatedContent = updatedContent.replaceFirstMapped(
+          routesClosingPattern,
+          (match) => '$routeDefinition${match.group(1)}${match.group(2)}',
+        );
+      } else {
+        // Fallback: add before the final closing bracket
+        final lastBracketIndex = updatedContent.lastIndexOf('  ],');
+        if (lastBracketIndex != -1) {
+          updatedContent = updatedContent.substring(0, lastBracketIndex) +
+              routeDefinition +
+              updatedContent.substring(lastBracketIndex);
+        }
+      }
+    }
+
+    // Write updated content
+    await routerFile.writeAsString(updatedContent);
+    print('✅ Updated router.dart with $featureName route');
   }
 }

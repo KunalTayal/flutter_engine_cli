@@ -173,24 +173,6 @@ use crate::image_processing::*;
 use crate::json_processing::*;
 use crate::cache::*;
 
-// Helper macro to convert C string to Rust string
-macro_rules! c_str_to_string {
-    (\$ptr:expr) => {
-        unsafe {
-            CStr::from_ptr(\$ptr)
-                .to_str()
-                .map_err(|e| anyhow::anyhow!("Invalid UTF-8 string: {}", e))?
-        }
-    };
-}
-
-// Helper macro to create C string from Rust string
-macro_rules! string_to_c_str {
-    (\$str:expr) => {
-        CString::new(\$str).map_err(|e| anyhow::anyhow!("Failed to create C string: {}", e))?.into_raw()
-    };
-}
-
 /// Free memory allocated by Rust
 #[no_mangle]
 pub extern "C" fn ${projectName}_free(ptr: *mut c_void) {
@@ -426,8 +408,8 @@ mod tests {
 
   static const String imageProcessingRs =
       '''// Image processing and caching module
-use image::{DynamicImage, ImageFormat};
-use std::path::{Path, PathBuf};
+use image::ImageFormat;
+use std::path::Path;
 use std::fs;
 use anyhow::{Result, Context};
 use crate::cache::*;
@@ -438,7 +420,7 @@ pub fn process_image(
     output_path: &str,
     width: u32,
     height: u32,
-    quality: u8,
+    _quality: u8,
 ) -> Result<()> {
     // Load image
     let img = image::open(image_path)
@@ -553,9 +535,9 @@ fn get_cached_image_path(cache_key: &str) -> Option<String> {
   static String cacheRs(String projectName) =>
       '''// Image cache management module
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::fs;
-use anyhow::{Result, Context};
+use anyhow::Result;
 use once_cell::sync::Lazy;
 use std::sync::Mutex;
 
