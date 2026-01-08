@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## 1.0.3
+- Fix the `add` command for creating route for `--with-g-routes` flag enabled
+- Add warning for overwrite existing file and folders & option to cancel
+- create an example file to explain the working of `flutter_engine_cli` package
+
 ## 1.0.2
 
 ### Changed & Bug Fixes
